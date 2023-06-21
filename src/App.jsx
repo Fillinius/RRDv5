@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Redirect, Switch, NavLink } from 'react-router-dom';
-import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
+import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 
 const MainPage = () => {
   return (
@@ -23,6 +23,8 @@ const App = () => {
 
   const UserPage = () => {
     const { userId, edit } = useParams()
+    const getUser = (userId) => users.find((u) => u.id.toString() === userId)
+    const user = getUser(userId)
     return (
       <>
         <h1>User Layout</h1>
@@ -31,7 +33,7 @@ const App = () => {
         {userId
           ? (edit
             ? <EditThisPage id={userId} />
-            : <UserListPage id={userId} />)
+            : <UserListPage user={user} id={userId} />)
           : <>
             <h1>User List Page</h1>
             {users.map((user) => (<ul key={user.id}><li><NavLink to={`/users/${user.id}`} ><p >{user.name}</p></NavLink></li></ul>))}
@@ -50,14 +52,16 @@ const App = () => {
       </ul>
     </>)
   }
-  const UserListPage = ({ id }) => {
+  const UserListPage = ({ id, user }) => {
+    const history = useHistory()
+    if (!user) return history.push('/users')
     return (<>
       <h1>UserPage</h1>
       <ul>
         <li><NavLink to='/users/' >User List Page</NavLink></li>
         <li><NavLink to={`/users/${id}/edit`}>Edit this page</NavLink></li>
       </ul>
-      <p> User id:{id}</p>
+      <p> {user.name} -id: {id}</p>
     </>)
   }
 
